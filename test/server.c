@@ -4,16 +4,14 @@
 #include <string.h> 
 #include <sys/socket.h> 
 #include <sys/types.h> 
-#include <string>
 #define MAX 80 
 #define PORT 8080 
 #define SA struct sockaddr 
-
 // Function designed for chat between client and server. 
 void func(int sockfd) 
 { 
+
     char buff[MAX]; 
-    string buffer;
     int n; 
     // infinite loop for chat 
     for (;;) { 

@@ -12,8 +12,6 @@ using namespace std;
 class KeyValueStoreManager
 {
 	static KeyValueStore keyValueStore;
-	// mutable std::shared_timed_mutex keyValueStoreMutex;
-	std::unordered_map<string, std::mutex> keyValueStoreMutex;
 	
 
 	public:
@@ -22,6 +20,7 @@ class KeyValueStoreManager
 	static std::unordered_map<string, bool> writer;
 		// KeyValueStoreManager();
 		// ~KeyValueStoreManager();
+
 
 		void checkAndInitializeKey(string key){
 			if(readers.find(key) == readers.end()){
@@ -34,16 +33,15 @@ class KeyValueStoreManager
 
 		std::string get(std::string key){
 			// std::shared_lock<std::shared_mutex> readerLock(keyValueStoreMutex);
-			checkAndInitializeKey(key);
+			checkAndInitializeKey(std::this_thread::sleep_for(std::chrono::seconds);key);
 
 			while(writer[key]);
-			keyValueStoreMutex[key].lock();
 			readers[key]++;
+			cout<<"reader"<<readers[key];
+			
 			std::string value = keyValueStore.getValue(key);
-			this_thread::sleep_for(chrono::milliseconds(900));
+			std::this_thread::sleep_for(std::chrono::seconds(5));
 			readers[key]--;
-			if(!readers[key])
-				keyValueStoreMutex[key].unlock();
 			return value;
 
 		}
@@ -52,12 +50,11 @@ class KeyValueStoreManager
 			checkAndInitializeKey(key);
 
 			while(readers[key] && writer[key]);
-			keyValueStoreMutex[key].lock();
 			writer[key] = true;
 			keyValueStore.putValue(key, value);
-			this_thread::sleep_for(chrono::milliseconds(900));
+			std::this_thread::sleep_for(std::chrono::seconds(5));
+
 			writer[key] = false;
-			keyValueStoreMutex[key].unlock();
 		}
 
 		void watch(std::string key){
