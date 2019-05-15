@@ -1,10 +1,10 @@
-#include "KeyValueStore.h"
+#include "../src/include/KeyValueStore.h"
 
 class KeyValueStoreTest{
 	KeyValueStore keyValueStore;
 
 	bool getValueKeyMissingTest(){
-		return (keyValueStore.getValue("TEST_KEY") == "");
+		return (keyValueStore.getValue("TEST_KEY") == "Error: Key not found!");
 	}
 
 	bool getValueKeyExistsTest(){
@@ -14,11 +14,11 @@ class KeyValueStoreTest{
 
 	public:
 		void run(){
-			std::cout << "Test for GET request when Key-Value pair doesn't exists:  " << 
-				(getValueKeyMissingTest() ? "Passed" : "Failed") << "\n";
+			std::cout << "\nTest for GET request when Key-Value pair doesn't exists:  " << 
+				(getValueKeyMissingTest() ? "Passed" : "Failed") << "\n\n";
 
-			std::cout << "Test for GET request when Key-Value pair exists:  " << 
-				(getValueKeyMissingTest() ? "Passed" : "Failed") << "\n";
+			std::cout << "\nTest for GET request when Key-Value pair exists:  " << 
+				(getValueKeyExistsTest() ? "Passed" : "Failed") << "\n\n";
 		}
 };
 

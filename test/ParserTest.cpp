@@ -1,78 +1,65 @@
-#include "Parser.h"
-
-// std::unordered_map<std::string, int>  KeyValueStoreManager::readers;
-// std::unordered_map<std::string, bool> KeyValueStoreManager::writer;
-// KeyValueStore KeyValueStoreManager::keyValueStore = *(new KeyValueStore());
+#include "../src/include/Parser.h"
 
 class ParserTest{
 	Parser parser;
 	BadInputException badInputException;
-	KeyValueStoreManager keyValueStoreManager;
 
 	void parseGetCommandWithOneArguementsTest(){
+		std::vector<std::string> functionParameters;
 		std::string command = "get TEST_KEY";
-		std::string exceptionMessage =  parser.parseInput(command);
+		std::string exceptionMessage =  parser.parseInput(command, functionParameters);
 		
-		std::cout << "parseGetCommandWithOneArguementsTest: " << ((exceptionMessage == "" ) ? "passed" 
-		: "failed") << std::endl;
+		std::cout << "\nparseGetCommandWithOneArguementsTest: " << ((exceptionMessage == "") ? "passed\n" 
+		: "failed\n") << std::endl;
 	}
 
 	void parseGetCommandWithMoreThanOneArguementsTest(){
+		std::vector<std::string> functionParameters;
 		std::string command = "get INPUT1 INPUT2";
-		std::string exceptionMessage =  parser.parseInput(command);
+		std::string exceptionMessage =  parser.parseInput(command, functionParameters);
 		std::cout << "parseGetCommandWithMoreThanOneArguementsTest: " << 
-		((exceptionMessage == "Bad Input Exception occured!" ) ? "passed" : "failed") << std::endl;
+		((exceptionMessage == "Bad Input Exception occured!" ) ? "passed\n" : "failed\n") << std::endl;
 	}
 
-	void parsePutCommandWithTwoArguementsTest(){ 
+	void parsePutCommandWithTwoArguementsTest(){
+		std::vector<std::string> functionParameters; 
 		std::string command = "put TEST_KEY TEST_VALUE";
-		std::string exceptionMessage =  parser.parseInput(command);
+		std::string exceptionMessage =  parser.parseInput(command, functionParameters);
 		
-		std::cout << "parsePutCommandWithTwoArguementsTest: " << ((exceptionMessage == "" ) ? "passed" 
-		: "failed") << std::endl;
+		std::cout << "parsePutCommandWithTwoArguementsTest: " << ((exceptionMessage == "" ) ? "passed\n" 
+		: "failed\n") << std::endl;
 	}
 
 	void parsePutCommandWithMoreThanTwoArguementsTest(){
+		std::vector<std::string> functionParameters;
 		std::string command = "put STRING1 STRING2 STRING3";
-		std::string exceptionMessage =  parser.parseInput(command);
+		std::string exceptionMessage =  parser.parseInput(command, functionParameters);
 		std::cout << "parsePutCommandWithMoreThanTwoArguementsTest: " << 
-		((exceptionMessage == "Bad Input Exception occured!" ) ? "passed" : "failed") << std::endl;
+		((exceptionMessage == "Bad Input Exception occured!" ) ? "passed\n" : "failed\n") << std::endl;
 	}
 
-	void parseWatchCommandWithOneArguementsTest(){ 
-		std::string command = "watch TEST_KEY";
-		std::string exceptionMessage =  parser.parseInput(command);
-		
-		std::cout << "parseWatchCommandWithOneArguementsTest: " << ((exceptionMessage == "" ) ? "passed" 
-		: "failed") << std::endl;
-	}
-
-	void parseWatchCommandWithMoreThanTwoArguementsTest(){
-		std::string command = "watch STRING1 STRING2 STRING3 ...";
-		std::string exceptionMessage =  parser.parseInput(command);
-		std::cout << "parseWatchCommandWithMoreThanTwoArguementsTest: " << 
-		((exceptionMessage == "Bad Input Exception occured!" ) ? "passed" : "failed") << std::endl;
-	}
-
-	void parseAnyCommandWithLessThanOneArguementsTest(){ 
+	void parseAnyCommandWithLessThanOneArguementsTest(){
+		std::vector<std::string> functionParameters; 
 		std::string command = "get";
-		std::string exceptionMessage =  parser.parseInput(command);
+		std::string exceptionMessage =  parser.parseInput(command, functionParameters);
 		std::cout << "parseAnyCommandWithLessThanOneArguementsTest: " << 
-		((exceptionMessage == "Bad Input Exception occured!" ) ? "passed" : "failed") << std::endl;
+		((exceptionMessage == "Bad Input Exception occured!" ) ? "passed\n" : "failed\n") << std::endl;
 	}
 
 	void parseAnyCommandWithMoreThreeArguementsTest(){
+		std::vector<std::string> functionParameters;
 		std::string command = "watch STRING1 STRING2 STRING3 ...";
-		std::string exceptionMessage =  parser.parseInput(command);
+		std::string exceptionMessage =  parser.parseInput(command, functionParameters);
 		std::cout << "parseAnyCommandWithMoreThanOThreeArguementsTest: " << 
-		((exceptionMessage == "Bad Input Exception occured!" ) ? "passed" : "failed") << std::endl;
+		((exceptionMessage == "Bad Input Exception occured!" ) ? "passed\n" : "failed\n") << std::endl;
 	}
 
 	void parseSomeRandomMessageTest(){
+		std::vector<std::string> functionParameters;
 		std::string command = "SOME RANDOM MESSAGE";
-		std::string exceptionMessage =  parser.parseInput(command);
+		std::string exceptionMessage =  parser.parseInput(command, functionParameters);
 		std::cout << "parseSomeRandomMessageTest: " << 
-		((exceptionMessage == "Bad Input Exception occured!" ) ? "passed" : "failed") << std::endl;
+		((exceptionMessage == "Bad Input Exception occured!" ) ? "passed\n" : "failed\n") << std::endl;
 	}
 
 	public:
@@ -81,8 +68,6 @@ class ParserTest{
 			parseGetCommandWithMoreThanOneArguementsTest();
 			parsePutCommandWithTwoArguementsTest();
 			parsePutCommandWithMoreThanTwoArguementsTest();
-			// parseWatchCommandWithOneArguementsTest();
-			parseWatchCommandWithMoreThanTwoArguementsTest();
 			parseAnyCommandWithLessThanOneArguementsTest();
 			parseAnyCommandWithMoreThreeArguementsTest();
 			parseSomeRandomMessageTest();
