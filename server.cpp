@@ -11,15 +11,38 @@
 #include <thread>
 #include "Parser.h"
 #include "ClientServerUtilities.h"
+#include "KeyValueStoreManager.h"
+#include <iostream>
+
+std::unordered_map<std::string, int>  KeyValueStoreManager::readers;
+std::unordered_map<std::string, bool> KeyValueStoreManager::writer;
+KeyValueStore KeyValueStoreManager::keyValueStore = *(new KeyValueStore());
+
 
 namespace server{
-    std::string parse(std::string command){
+    std::string runCommand(std::string command){
         Parser parser;
-        std::string outputMessage = parser.parseInput(command);
-        printf("%s\n", outputMessage.c_str());
-        // return server::getClientOutput(outputMessage, clientOutput);
+        KeyValueStoreManager keyValueStoreManager;
+        std::vector<std::string> functionParameters;
+        std::string outputMessage = parser.parseInput(command, functionParameters);
+        if(outputMessage == ""){
+            if(functionParameters[0] == "get")
+                return keyValueStoreManager.get(functionParameters[1]);
+            else if(functionParameters[0] == "put")
+                keyValueStoreManager.put(functionParameters[1], functionParameters[2]);
+        }
+        //, arguements[2]);
+
+        // return keyValueStoreManager.run(arguements);
         return outputMessage;
     }
+    // std::string parse(std::string command){
+    //     Parser parser;
+    //     std::string outputMessage = parser.parseInput(command);
+    //     printf("%s\n", outputMessage.c_str());
+    //     // return server::getClientOutput(outputMessage, clientOutput);
+    //     return outputMessage;
+    // }
 }; 
 std::unordered_map<int, bool> clients;
 void clientHandler(int clientId) {
@@ -31,7 +54,7 @@ void clientHandler(int clientId) {
     command = command.substr(0,n);
 
     char clientOutput[1024];
-    std::string outputMessage = server::parse(command);
+    std::string outputMessage = server::runCommand(command);
     int m = send(clientId, outputMessage.c_str(), 1024*sizeof(char), 0);
     while(1);
     close(clientId);
@@ -49,7 +72,8 @@ int main(int argc, char const *argv[])
     memset(dataSending, '0', sizeof(dataSending));
     ipOfServer.sin_family = AF_INET;
     ipOfServer.sin_addr.s_addr = htonl(INADDR_ANY);
-    ipOfServer.sin_port = htons(9097);
+    int PORT; scanf("%d", &PORT);
+    ipOfServer.sin_port = htons(PORT);
     bind(clintListn, (struct sockaddr*)&ipOfServer , sizeof(ipOfServer));
     listen(clintListn , 20);
     std::vector<std::thread> threads;

@@ -6,11 +6,6 @@
 #include <sstream>
 #include <iostream>
 #include <exception>
-#include "KeyValueStoreManager.h"
-
-std::unordered_map<std::string, int>  KeyValueStoreManager::readers;
-std::unordered_map<std::string, bool> KeyValueStoreManager::writer;
-KeyValueStore KeyValueStoreManager::keyValueStore = *(new KeyValueStore());
 
 class BadInputException: public std::exception
 {
@@ -20,8 +15,7 @@ class BadInputException: public std::exception
 	}
 };
 
-class Parser{
-	KeyValueStoreManager keyValueStoreManager; 
+class Parser{ 
 	std::vector<std::string> splitStringBySpace(std::string command) 
 	{ 
 	    std::istringstream iStringStream(command); 
@@ -31,20 +25,18 @@ class Parser{
 	        iStringStream >> parameter; 
 
 	        // std:: cout<< parameter <<"..\n";
-	  
-	        functionParameters.push_back(parameter);
+	  		if(parameter.length() !=0 && parameter != " ")
+	        	functionParameters.push_back(parameter);
 	    } while (iStringStream); 
 
-	    if(functionParameters.size() > 0)
-	    	functionParameters.pop_back();
 	    return functionParameters;
 	} 
 
 	public:
-		std::string parseInput(std::string command){
+		std::string parseInput(std::string command, std::vector<std::string> &functionParameters){
 			std::cout<<command<<"\n";
 			BadInputException ex;
-			std::vector<std::string> functionParameters = splitStringBySpace(command);
+			functionParameters = splitStringBySpace(command);
 			int noOfParameters = functionParameters.size();
 
 			// for(int i =0 ; i<functionParameters.size();i++)
@@ -57,7 +49,8 @@ class Parser{
 						throw ex;
 					}
 					else if(functionParameters[0] == "get")
-						return keyValueStoreManager.get(functionParameters[1]);
+						return "";
+						// return keyValueStoreManager.get(functionParameters[1]);
 					// else if(functionParameters[0] == "watch")
 					// 	keyValueStoreManager.watch(functionParameters[1]);
 					else{
@@ -67,7 +60,8 @@ class Parser{
 				}
 				else if(noOfParameters == 3){
 					if(functionParameters[0] == "put")
-						keyValueStoreManager.put(functionParameters[1], functionParameters[2]);
+						return "";
+						// keyValueStoreManager.put(functionParameters[1], functionParameters[2]);
 
 					else{
 						std::cout << "Invalid command! Please check and retry!" << std::endl;

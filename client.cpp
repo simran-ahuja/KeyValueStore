@@ -29,7 +29,8 @@ int main(int argc, char** argv)
     }
  
     ipOfServer.sin_family = AF_INET;
-    ipOfServer.sin_port = htons(9097);
+    int PORT; scanf("%d", &PORT);
+    ipOfServer.sin_port = htons(PORT);
     ipOfServer.sin_addr.s_addr = inet_addr("127.0.0.1");
  
     if(connect(CreateSocket, (struct sockaddr *)&ipOfServer, sizeof(ipOfServer))<0)

@@ -33,6 +33,7 @@ class KeyValueStoreManager
 
 		std::string get(std::string key){
 			// std::shared_lock<std::shared_mutex> readerLock(keyValueStoreMutex);
+			std::cout<<key<<"***";
 			checkAndInitializeKey(key);
 
 			while(writer[key]);
@@ -49,6 +50,7 @@ class KeyValueStoreManager
 		}
 
 		void put(std::string key, std::string value){
+			std::cout<<key<<" "<<value<<" **";
 			checkAndInitializeKey(key);
 
 			while(readers[key] && writer[key]);
@@ -57,6 +59,15 @@ class KeyValueStoreManager
 			// std::this_thread::sleep_for(std::chrono::seconds(5));
 
 			writer[key] = false;
+		}
+
+		std::string run(std::vector<std::string> command){
+			std::cout<< command[0] <<command[1]<<command[2];
+			if(command[0] == "get")
+				return get(command[1]);
+			else if(command[0] == "put")
+				put(command[0], command[1]);
+			return "";
 		}
 
 		// void watch(std::string key){
