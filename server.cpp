@@ -22,6 +22,19 @@ namespace server{
     }
 }; 
 
+int clientHandler(int clientId) {
+    char dataSending[1025];
+    int n=read(clientId, dataSending, sizeof(dataSending)-1);
+    printf("%d\n",n);
+    printf("%s\n", dataSending);
+    std::string command(dataSending);
+    command = command.substr(0,n);
+
+    char clientOutput[1024];
+    std::string outputMessage = server::parse(command);
+    int m = send(clientId, outputMessage.c_str(), 1024*sizeof(char), 0);
+    return clientId;
+}
 
 int main(int argc, char const *argv[])
 {
@@ -34,7 +47,7 @@ int main(int argc, char const *argv[])
     memset(dataSending, '0', sizeof(dataSending));
     ipOfServer.sin_family = AF_INET;
     ipOfServer.sin_addr.s_addr = htonl(INADDR_ANY);
-    ipOfServer.sin_port = htons(9094);
+    ipOfServer.sin_port = htons(9095);
     bind(clintListn, (struct sockaddr*)&ipOfServer , sizeof(ipOfServer));
     listen(clintListn , 20);
  
@@ -43,21 +56,21 @@ int main(int argc, char const *argv[])
         printf("\n\nHi,Iam running server.Some Client hit me\n"); 
         clintConnt = accept(clintListn, (struct sockaddr*)NULL, NULL);
         printf("connected\n");
-        int n=read(clintConnt, dataSending, sizeof(dataSending)-1);
-        printf("%d\n",n);
-        printf("%s\n", dataSending);
-        std::string command(dataSending);
-        command = command.substr(0,n);
+        // int n=read(clintConnt, dataSending, sizeof(dataSending)-1);
+        // printf("%d\n",n);
+        // printf("%s\n", dataSending);
+        // std::string command(dataSending);
+        // command = command.substr(0,n);
 
-        char clientOutput[1024];
+        // char clientOutput[1024];
         // // std::string x = (std::thread Thread(server::parse, command.substr(0,n)));
         // // server::getClientOutput(x, clientOutput);
         // // int m = send(clintConnt, clientOutput, sizeof(clientOutput), 0);
-
-        // // Thread.join();
-        std::string outputMessage = server::parse(command);
-        server::getClientOutput(outputMessage, clientOutput);
-        int m = send(clintConnt, outputMessage.c_str(), 1024*sizeof(char), 0);
+        std::thread Thread(clientHandler, clintConnt);
+        Thread.join();
+        // std::string outputMessage = server::parse(command);
+        // server::getClientOutput(outputMessage, clientOutput);
+        // int m = send(clintConnt, outputMessage.c_str(), 1024*sizeof(char), 0);
 
         // // while((n = read(clintListn, dataSending, sizeof(dataSending)-1)) > 0)
         // // {
