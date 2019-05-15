@@ -7,7 +7,7 @@
 #include <chrono>
 #include <unordered_map>
 #include "KeyValueStore.h"
-using namespace std;
+
 
 class KeyValueStoreManager
 {
@@ -16,13 +16,13 @@ class KeyValueStoreManager
 
 	public:
 
-	static std::unordered_map<string, int> readers;
-	static std::unordered_map<string, bool> writer;
+	static std::unordered_map<std::string, int> readers;
+	static std::unordered_map<std::string, bool> writer;
 		// KeyValueStoreManager();
 		// ~KeyValueStoreManager();
 
 
-		void checkAndInitializeKey(string key){
+		void checkAndInitializeKey(std::string key){
 			if(readers.find(key) == readers.end()){
 				readers[key] = 0;
 				writer[key] = false;
@@ -33,14 +33,16 @@ class KeyValueStoreManager
 
 		std::string get(std::string key){
 			// std::shared_lock<std::shared_mutex> readerLock(keyValueStoreMutex);
-			checkAndInitializeKey(std::this_thread::sleep_for(std::chrono::seconds);key);
+			checkAndInitializeKey(key);
 
 			while(writer[key]);
 			readers[key]++;
-			cout<<"reader"<<readers[key];
+			std:: cout<<"reader"<<readers[key] <<"   ..";
 			
 			std::string value = keyValueStore.getValue(key);
-			std::this_thread::sleep_for(std::chrono::seconds(5));
+
+			std::cout<<"value read";
+			// std::this_thread::sleep_for(std::chrono::seconds(5));
 			readers[key]--;
 			return value;
 
@@ -52,14 +54,14 @@ class KeyValueStoreManager
 			while(readers[key] && writer[key]);
 			writer[key] = true;
 			keyValueStore.putValue(key, value);
-			std::this_thread::sleep_for(std::chrono::seconds(5));
+			// std::this_thread::sleep_for(std::chrono::seconds(5));
 
 			writer[key] = false;
 		}
 
-		void watch(std::string key){
-			keyValueStore.watchValue(key);
-		}
+		// void watch(std::string key){
+		// 	keyValueStore.watchValue(key);
+		// }
 };
 
 #endif
