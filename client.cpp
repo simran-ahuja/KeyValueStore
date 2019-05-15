@@ -39,20 +39,7 @@ int main(int argc, char** argv)
         return 1;
     }
  
-    // while((n = read(CreateSocket, dataReceived, sizeof(dataReceived)-1)) > 0)
-    // {
-    //     dataReceived[n] = 0;
-    //     if(fputs(dataReceived, stdout) == EOF)
-    //     {
-    //         printf("\nStandard output error");
-    //     }
- 
-    //     printf("\n");
-    // }
-
-
-    // strcpy(dataReceived, "test");
-    printf("\n%s\n\n",dataReceived );
+    // printf("\n%s\n\n",dataReceived );
        
     char returnCommand[1024];
     int commandLength;
@@ -69,12 +56,22 @@ int main(int argc, char** argv)
             m = read(CreateSocket, value, sizeof(value));
             printf("%s\n", value);
         while(1){
+            close(CreateSocket);
+            std::this_thread::sleep_for (std::chrono::seconds(1));  
+            if((CreateSocket = socket(AF_INET, SOCK_STREAM, 0))< 0)
+            {
+                printf("Socket not created \n");
+                return 1;
+            }
+            if(connect(CreateSocket, (struct sockaddr *)&ipOfServer, sizeof(ipOfServer))<0)
+            {
+                printf("Connection failed due to port and ip problems\n");
+                return 1;
+            }            
             char newValue[1024];
-            // std::this_thread::sleep_for (std::chrono::seconds(1));
             n = send(CreateSocket, returnCommand, sizeof(returnCommand),0);
             m = read(CreateSocket, newValue, sizeof(newValue));
-            printf("%s\n", newValue);
-            if(!(std::strcmp(value, newValue))){
+            if(std::strcmp(value, newValue)){
                 printf("New value of %s: %s\n\n", key.c_str(), newValue);
                 std::strcpy(value, newValue);
             }
@@ -93,6 +90,7 @@ int main(int argc, char** argv)
         return 0;
     }
 
+    close(CreateSocket);              
 
  
     return 0;
