@@ -15,11 +15,11 @@ Server:
   ./server
   
 Client:
-  ./kv <command> <arguements>
+  ./kv command arguements
   
 # Client Commands
-* put <key> <value>
-* get <key>
-* watch <key>
+* put key value
+* get key
+* watch key
   
 **Note: Enter the same port no. on client & server side for application to run the application smoothly.
