@@ -21,8 +21,8 @@ namespace server{
         return outputMessage;
     }
 }; 
-
-int clientHandler(int clientId) {
+std::unordered_map<int, bool> clients;
+void clientHandler(int clientId) {
     char dataSending[1025];
     int n=read(clientId, dataSending, sizeof(dataSending)-1);
     printf("%d\n",n);
@@ -33,29 +33,32 @@ int clientHandler(int clientId) {
     char clientOutput[1024];
     std::string outputMessage = server::parse(command);
     int m = send(clientId, outputMessage.c_str(), 1024*sizeof(char), 0);
-    return clientId;
+    while(1);
+    close(clientId);
+    clients[clientId]=false;
 }
 
 int main(int argc, char const *argv[])
 {
     time_t clock;
     char dataSending[1025];
-    int clintListn = 0, clintConnt = 0;
+    int clintListn = 0;
     struct sockaddr_in ipOfServer;
     clintListn = socket(AF_INET, SOCK_STREAM, 0);
     memset(&ipOfServer, '0', sizeof(ipOfServer));
     memset(dataSending, '0', sizeof(dataSending));
     ipOfServer.sin_family = AF_INET;
     ipOfServer.sin_addr.s_addr = htonl(INADDR_ANY);
-    ipOfServer.sin_port = htons(9095);
+    ipOfServer.sin_port = htons(9097);
     bind(clintListn, (struct sockaddr*)&ipOfServer , sizeof(ipOfServer));
     listen(clintListn , 20);
- 
+    std::vector<std::thread> threads;
     while(1)
     {
         printf("\n\nHi,Iam running server.Some Client hit me\n"); 
-        clintConnt = accept(clintListn, (struct sockaddr*)NULL, NULL);
-        printf("connected\n");
+        int clintConnt = accept(clintListn, (struct sockaddr*)NULL, NULL);
+        printf("connected to client id: %d\n", clintConnt);
+        clients[clintConnt] = true;
         // int n=read(clintConnt, dataSending, sizeof(dataSending)-1);
         // printf("%d\n",n);
         // printf("%s\n", dataSending);
@@ -66,8 +69,8 @@ int main(int argc, char const *argv[])
         // // std::string x = (std::thread Thread(server::parse, command.substr(0,n)));
         // // server::getClientOutput(x, clientOutput);
         // // int m = send(clintConnt, clientOutput, sizeof(clientOutput), 0);
-        std::thread Thread(clientHandler, clintConnt);
-        Thread.join();
+        threads.push_back(std::thread(clientHandler, clintConnt));
+        
         // std::string outputMessage = server::parse(command);
         // server::getClientOutput(outputMessage, clientOutput);
         // int m = send(clintConnt, outputMessage.c_str(), 1024*sizeof(char), 0);
@@ -87,9 +90,7 @@ int main(int argc, char const *argv[])
         // // clock = time(NULL);
         // // snprintf(dataSending, sizeof(dataSending), "%.24s\r\n", ctime(&clock)); // Printing successful message
         // // write(clintConnt, dataSending, strlen(dataSending));
- 
-        close(clintConnt);
-        sleep(1);
+            
      }
  
      return 0;
